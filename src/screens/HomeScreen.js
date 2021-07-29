@@ -26,31 +26,24 @@ const HomeScreen = props => {
     setCheck(!check);
   }, []);
   const getData = () => {
-    reference.on('value', snapshot => {
-      let newFood = [];
-      snapshot.forEach(data => {
-        const dataVal = data.val();
-        newFood.push({
-          id: data.key,
-          name: dataVal.name,
-          calory: dataVal.calory,
+    database()
+      .ref('/foods/')
+      .on('value', snapshot => {
+        let newFood = [];
+        snapshot.forEach(data => {
+          const dataVal = data.val();
+          newFood.push({
+            id: data.key,
+            name: dataVal.name,
+            calory: dataVal.calory,
+          });
+          setFoods(newFood);
         });
-        setFoods(newFood);
       });
-    });
   };
-  const deleteHandler = id => {
-    database().ref(`/foods/${id}`).remove();
-    // getData();
-  };
-
-  const updateHandler = async () => {
-    await database()
-      .ref('/users/2')
-      .update({
-        ayu: 7,
-      })
-      .then(() => console.log('Data updated.'));
+  const deleteHandler = async id => {
+    console.log(id);
+    await database().ref(`/foods/${id}`).remove();
   };
 
   const renderFood = ({item}) => {
@@ -78,21 +71,41 @@ const HomeScreen = props => {
             </Text>
           </View>
         </View>
-        <TouchableOpacity
-          onPress={() => {
-            deleteHandler(item.id);
-          }}>
-          <View
-            style={{
-              marginLeft: 100,
-              backgroundColor: 'red',
-              paddingHorizontal: 10,
-              paddingVertical: 5,
-              borderRadius: 10,
+        <View style={{flexDirection: 'row', marginLeft: 50}}>
+          <TouchableOpacity
+            onPress={() => {
+              props.navigation.navigate('New Food', {
+                id: item.id,
+                name: item.name,
+                calory: item.calory,
+              });
             }}>
-            <Text style={{fontWeight: 'bold', color: '#fff'}}>delete</Text>
-          </View>
-        </TouchableOpacity>
+            <View
+              style={{
+                backgroundColor: '#2ecc71',
+                paddingHorizontal: 10,
+                paddingVertical: 5,
+                borderRadius: 10,
+              }}>
+              <Text style={{fontWeight: 'bold', color: '#fff'}}>update</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              deleteHandler(item.id);
+            }}>
+            <View
+              style={{
+                marginLeft: 10,
+                backgroundColor: 'red',
+                paddingHorizontal: 10,
+                paddingVertical: 5,
+                borderRadius: 10,
+              }}>
+              <Text style={{fontWeight: 'bold', color: '#fff'}}>delete</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   };
@@ -109,7 +122,6 @@ const HomeScreen = props => {
     <View style={{flex: 1}}>
       <FlatList
         data={foods}
-        extraData={foods}
         keyExtractor={item => item.id}
         renderItem={renderFood}
       />

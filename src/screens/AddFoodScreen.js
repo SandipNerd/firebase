@@ -11,25 +11,44 @@ import {
 } from 'react-native';
 import database from '@react-native-firebase/database';
 
-const newReference = database().ref('/foods').push();
-
 const AddFoodScreen = props => {
-  const [visible, setVisible] = useState(false);
-  const [name, setName] = useState();
-  const [calory, setCalory] = useState();
+  const {name} = props.route.params ? props.route.params : '';
+  const {calory} = props.route.params ? props.route.params : '';
+  const {id} = props.route.params ? props.route.params : '';
 
-  const submitHandler = () => {
-    setVisible(true);
-    newReference
-      .set({
-        name: name,
-        calory: calory,
-      })
-      .then(() => {
-        setVisible(false);
-        alert('food submitted successfully!');
-        props.navigation.navigate('Food List');
-      });
+  const [visible, setVisible] = useState(false);
+  const [foodName, setFoodName] = useState(name);
+  const [foodCalory, setFoodCalory] = useState(calory);
+
+  const submitHandler = id => {
+    console.log(id);
+    if (foodName !== '' && foodCalory !== '' && id !== undefined) {
+      database()
+        .ref(`/foods/${id}`)
+        .update({
+          name: foodName,
+          calory: foodCalory,
+        })
+        .then(() => {
+          setVisible(false);
+          alert('food updated successfully!');
+          props.navigation.navigate('Food List');
+        });
+    } else {
+      setVisible(true);
+      database()
+        .ref('/foods')
+        .push()
+        .set({
+          name: foodName,
+          calory: foodCalory,
+        })
+        .then(() => {
+          setVisible(false);
+          alert('food submitted successfully!');
+          props.navigation.navigate('Food List');
+        });
+    }
   };
 
   return (
@@ -49,9 +68,10 @@ const AddFoodScreen = props => {
         <Text style={styles.inputText}>Food Name</Text>
         <TextInput
           style={styles.input}
-          value={name}
+          value={foodName}
           onChangeText={text => {
-            setName(text);
+            console.log(text);
+            setFoodName(text);
           }}
         />
       </View>
@@ -59,17 +79,27 @@ const AddFoodScreen = props => {
         <Text style={styles.inputText}>Carbohydrates</Text>
         <TextInput
           style={styles.input}
-          value={calory}
+          value={foodCalory}
           onChangeText={text => {
-            setCalory(text);
+            setFoodCalory(text);
           }}
         />
       </View>
-      <TouchableOpacity activeOpacity={0.7} onPress={submitHandler}>
+      <TouchableOpacity
+        activeOpacity={0.7}
+        onPress={() => {
+          submitHandler(id);
+        }}>
         <View style={styles.submitButton}>
-          <Text style={{color: '#FFF', fontSize: 18, fontWeight: 'bold'}}>
-            Add New Food
-          </Text>
+          {name ? (
+            <Text style={{color: '#FFF', fontSize: 18, fontWeight: 'bold'}}>
+              Update Food
+            </Text>
+          ) : (
+            <Text style={{color: '#FFF', fontSize: 18, fontWeight: 'bold'}}>
+              Add New Food
+            </Text>
+          )}
         </View>
       </TouchableOpacity>
     </View>
