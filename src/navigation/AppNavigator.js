@@ -21,8 +21,16 @@ const StackNavigator = () => {
           fontWeight: 'bold',
         },
       }}>
-      <Stack.Screen name="Food List" component={HomeScreen} />
-      <Stack.Screen name="New Food" component={AddFoodScreen} />
+      <Stack.Screen
+        name="Food_List"
+        component={HomeScreen}
+        options={{headerTitle: 'Food List'}}
+      />
+      <Stack.Screen
+        name="New_Food"
+        component={AddFoodScreen}
+        options={{headerTitle: 'New Food'}}
+      />
     </Stack.Navigator>
   );
 };

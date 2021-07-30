@@ -11,6 +11,8 @@ import {
 } from 'react-native';
 import database from '@react-native-firebase/database';
 
+const reference = database().ref('/foods').push();
+
 const AddFoodScreen = props => {
   const {name} = props.route.params ? props.route.params : '';
   const {calory} = props.route.params ? props.route.params : '';
@@ -32,13 +34,11 @@ const AddFoodScreen = props => {
         .then(() => {
           setVisible(false);
           alert('food updated successfully!');
-          props.navigation.navigate('Food List');
+          props.navigation.navigate('Food_List');
         });
     } else {
       setVisible(true);
-      database()
-        .ref('/foods')
-        .push()
+      reference
         .set({
           name: foodName,
           calory: foodCalory,
@@ -46,7 +46,7 @@ const AddFoodScreen = props => {
         .then(() => {
           setVisible(false);
           alert('food submitted successfully!');
-          props.navigation.navigate('Food List');
+          props.navigation.navigate('Food_List');
         });
     }
   };
@@ -54,13 +54,7 @@ const AddFoodScreen = props => {
   return (
     <View style={styles.formContainer}>
       <Modal visible={visible} transparent={true}>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: 'rgba(0,0,0,0.5)',
-          }}>
+        <View style={styles.modalView}>
           <ActivityIndicator color="#2ecc71" size="large" />
         </View>
       </Modal>
@@ -92,13 +86,9 @@ const AddFoodScreen = props => {
         }}>
         <View style={styles.submitButton}>
           {name ? (
-            <Text style={{color: '#FFF', fontSize: 18, fontWeight: 'bold'}}>
-              Update Food
-            </Text>
+            <Text style={styles.updateText}>Update Food</Text>
           ) : (
-            <Text style={{color: '#FFF', fontSize: 18, fontWeight: 'bold'}}>
-              Add New Food
-            </Text>
+            <Text style={styles.addText}>Add New Food</Text>
           )}
         </View>
       </TouchableOpacity>
@@ -136,6 +126,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#2ecc71',
     borderRadius: 10,
   },
+  modalView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  updateText: {color: '#FFF', fontSize: 18, fontWeight: 'bold'},
+  addText: {color: '#FFF', fontSize: 18, fontWeight: 'bold'},
 });
 
 export default AddFoodScreen;
