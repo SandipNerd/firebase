@@ -13,13 +13,12 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
-const newReference = database().ref('/foods');
-
 const HomeScreen = props => {
-  const [foods, setFoods] = useState([]);
+  const newReference = database().ref('/foods');
+
+  const [foods, setFoods] = useState();
   const [loading, setLoading] = useState(false);
 
-  console.log(foods);
   useEffect(() => {
     getData();
   }, []);
@@ -38,7 +37,6 @@ const HomeScreen = props => {
     });
   };
   const deleteHandler = async id => {
-    console.log(id);
     await database().ref(`/foods/${id}`).remove();
   };
 
