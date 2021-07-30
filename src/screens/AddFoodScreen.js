@@ -11,9 +11,9 @@ import {
 } from 'react-native';
 import database from '@react-native-firebase/database';
 
-const reference = database().ref('/foods').push();
-
 const AddFoodScreen = props => {
+  const newReference = database().ref('/foods').push();
+
   const {name} = props.route.params ? props.route.params : '';
   const {calory} = props.route.params ? props.route.params : '';
   const {id} = props.route.params ? props.route.params : '';
@@ -23,7 +23,6 @@ const AddFoodScreen = props => {
   const [foodCalory, setFoodCalory] = useState(calory);
 
   const submitHandler = id => {
-    console.log(id);
     if (foodName !== '' && foodCalory !== '' && id !== undefined) {
       database()
         .ref(`/foods/${id}`)
@@ -38,7 +37,7 @@ const AddFoodScreen = props => {
         });
     } else {
       setVisible(true);
-      reference
+      newReference
         .set({
           name: foodName,
           calory: foodCalory,

@@ -13,20 +13,18 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
-const reference = database().ref('/foods');
+const newReference = database().ref('/foods');
 
 const HomeScreen = props => {
   const [foods, setFoods] = useState([]);
-  const [check, setCheck] = useState(true);
   const [loading, setLoading] = useState(false);
 
   console.log(foods);
   useEffect(() => {
     getData();
-    setCheck(!check);
   }, []);
   const getData = () => {
-    reference.on('value', snapshot => {
+    newReference.on('value', snapshot => {
       let newFood = [];
       snapshot.forEach(data => {
         const dataVal = data.val();
